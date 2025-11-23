@@ -1,71 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScholarSync - Academic Paper Finder</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScholarSync - Academic Paper Finder</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+      body {
+          font-family: 'Inter', sans-serif;
+          background-color: #f7f9fb;
+      }
+      .container {
+          max-width: 1000px;
+      }
+      .card {
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+          transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      }
+      .sort-icon {
+          cursor: pointer;
+          margin-left: 0.5rem;
+          opacity: 0.6;
+      }
+      #source-filters::-webkit-scrollbar {
+          width: 6px;
+      }
+      #source-filters::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+      }
+      #source-filters::-webkit-scrollbar-thumb {
+          background: #888;
+          border-radius: 10px;
+      }
+      #source-filters::-webkit-scrollbar-thumb:hover {
+          background: #555;
+      }
+      .card h2 a {
+          display: inline-block;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+  </style>
 </head>
 <body class="p-4 sm:p-8">
 
-    <div class="container mx-auto">
-        <header class="text-center mb-8">
-            <h1 class="text-4xl font-extrabold text-blue-800">ScholarSync</h1>
-            <p class="text-gray-600 mt-2">Find and filter up-to-date academic research.</p>
-        </header>
+  <div class="container mx-auto px-2 sm:px-4">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-extrabold text-blue-800">ScholarSync</h1>
+      <p class="text-gray-600 mt-2">Find and filter up-to-date academic research.</p>
+    </header>
 
-        <div class="bg-white p-6 rounded-xl card mb-8 shadow-lg">
-            <form id="search-form" class="flex flex-col sm:flex-row gap-4">
-                <input type="text" id="search-query" placeholder="Enter keywords (e.g., 'quantum computing applications')"
-                       class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                <button type="submit" id="search-button"
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out shadow-md disabled:opacity-50">
-                    <span id="button-text">Search Papers</span>
-                    <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </button>
-            </form>
-        </div>
-
-        <div id="results-container" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
-            <div id="filter-column" class="lg:col-span-1 bg-white p-6 rounded-xl card hidden">
-                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filter Results</h3>
-                
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-semibold mb-2">Source / Journal</label>
-                    <div id="source-filters" class="space-y-2 max-h-40 overflow-y-auto pr-2">
-                        <p class="text-sm text-gray-500">Search to populate filters.</p>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 font-semibold mb-2">Sort By</label>
-                    <select id="sort-select" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" disabled>
-                        <option value="relevance" data-order="desc">Relevance (Default)</option>
-                        <option value="citation_count" data-order="desc">Citation Count (High to Low)</option>
-                        <option value="citation_count" data-order="asc">Citation Count (Low to High)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="paper-results" class="lg:col-span-3">
-                <div class="bg-white p-6 rounded-xl text-center shadow-lg">
-                    <p class="text-gray-500" id="initial-message">Enter a topic above to start searching for academic papers.</p>
-                    <div id="error-message" class="text-red-600 font-bold hidden"></div>
-                    <div id="no-results-message" class="hidden">
-                        <h4 class="text-2xl font-semibold text-gray-700 mt-4">No Papers Found</h4>
-                        <p class="text-gray-500 mt-2">Try broadening your search terms or checking your spelling.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <!-- Search Input -->
+    <div class="bg-white p-6 rounded-xl card mb-8 shadow-lg">
+      <form id="search-form" class="flex flex-col sm:flex-row gap-4">
+        <input type="text" id="search-query" placeholder="Enter keywords (e.g., 'quantum computing applications')"
+            class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+        <button type="submit" id="search-button"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-150 ease-in-out shadow-md disabled:opacity-50 flex gap-2 items-center">
+          <span id="button-text">Search Papers</span>
+          <svg id="loading-spinner" class="animate-spin h-5 w-5 text-white hidden" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+          </svg>
+        </button>
+      </form>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <!-- Filter and Results Section -->
+    <div id="results-container" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+      <!-- Filters Column (Hidden until results are available) -->
+      <div id="filter-column" class="lg:col-span-1 bg-white p-6 rounded-xl card hidden">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filter Results</h3>
+        <div class="mb-6">
+          <label class="block text-gray-700 font-semibold mb-2">Venue / Source</label>
+          <div id="source-filters" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+            <p class="text-sm text-gray-500">Search to populate filters.</p>
+          </div>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Sort By</label>
+          <select id="sort-select" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white" disabled>
+            <option value="relevance" data-order="desc">Relevance (Default)</option>
+            <option value="citation_count" data-order="desc">Citation Count (High to Low)</option>
+            <option value="citation_count" data-order="asc">Citation Count (Low to High)</option>
+            <option value="year" data-order="desc">Year (Newest First)</option>
+            <option value="year" data-order="asc">Year (Oldest First)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results Column -->
+      <div id="paper-results" class="lg:col-span-3">
+        <div class="bg-white p-6 rounded-xl text-center shadow-lg">
+          <p class="text-gray-500" id="initial-message">Enter a topic above to start searching for academic papers.</p>
+          <div id="error-message" class="text-red-600 font-bold hidden"></div>
+          <div id="no-results-message" class="hidden">
+            <h4 class="text-2xl font-semibold text-gray-700 mt-4">No Papers Found</h4>
+            <p class="text-gray-500 mt-2">Try broadening your search terms or checking your spelling.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    let papersData = [];
+    let currentFilters = new Set();
+    let currentSort = { key: 'relevance', order: 'desc' };
+
+    // DOM elements
+    const form = document.getElementById('search-form');
+    const queryInput = document.getElementById('search-query');
+    const resultsDiv = document.getElementById('paper-results');
+    const initialMessage = document.getElementById('initial-message');
+    const errorMessage = document.getElementById('error-message');
+    const noResultsMessage = document.getElementById('no-results-message');
+    const searchButton = document.getElementById('search-button');
+    const buttonText = document.getElementById('button-text');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const filterColumn = document.getElementById('filter-column');
+    const sourceFiltersDiv = document.getElementById('source-filters');
+    const sortSelect = document.getElementById('sort-select');
+
+    // Render Result Cards
+    function renderPapers(data) {
+      resultsDiv.innerHTML = '';
+      if (data.length === 0) {
+        noResultsMessage.classList.remove('hidden');
+        return;
+      } else {
+        noResultsMessage.classList.add('hidden');
+      }
+
+      data.forEach(paper => {
+        const cardHtml = `
+          <div class="bg-white p-6 rounded-xl card mb-4 border-l-4 border-blue-500">
+            <h2 class="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition duration-150">
+              <a href="${paper.source_uri || '#'}" target="_blank" rel="noopener noreferrer">${paper.title}</a>
+            </h2>
+            <div class="text-sm text-gray-500 mb-3 space-x-4">
+              <span><strong>Authors:</strong> ${paper.authors}</span>
+              <span><strong>Year:</strong> ${paper.year}</span>
+              <span><strong>Citations:</strong> <span class="text-green-600 font-semibold">${paper.citation_count ?? "N/A"}</span></span>
+            </div>
+            <p class="text-gray-700 mb-4 text-justify">${paper.abstract}</p>
+            <div class="flex justify-between items-center text-xs">
+              <span class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full font-medium">Source: ${paper.source_title}</span>
+              <a href="${paper.source_uri || '#'}" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 font-medium">Read More &rarr;</a>
+            </div>
+          </div>
+        `;
+        resultsDiv.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    // Populate Checkbox Filters
+    function populateFilters(data) {
+      const uniqueSources = [...new Set(data.map(p => p.source_title))].sort();
+      sourceFiltersDiv.innerHTML = '';
+      if (uniqueSources.length === 0) {
+        sourceFiltersDiv.innerHTML = '<p class="text-sm text-gray-500">No external sources identified.</p>';
+      } else {
+        uniqueSources.forEach(source => {
+          const isChecked = currentFilters.has(source);
+          const count = data.filter(p => p.source_title === source).length;
+          const filterHtml = `
+            <label class="inline-flex items-center text-gray-700 cursor-pointer hover:bg-gray-100 p-1 rounded w-full">
+              <input type="checkbox" data-source="${source.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''} 
+                  class="form-checkbox h-4 w-4 text-blue-600 rounded" onchange="window.filterResults && filterResults(event.target.dataset.source, this.checked)">
+              <span class="ml-2 text-sm">${source} (${count})</span>
+            </label>
+          `;
+          sourceFiltersDiv.insertAdjacentHTML('beforeend', filterHtml);
+        });
+      }
+      filterColumn.classList.remove('hidden');
+      sortSelect.disabled = false;
+    }
+
+    // Filter by venue/source
+    window.filterResults = (source, isChecked) => {
+      if (isChecked) {
+        currentFilters.add(source);
+      } else {
+        currentFilters.delete(source);
+      }
+      applyFiltersAndSort();
+    };
+
+    // Sorting Logic
+    sortSelect.addEventListener('change', (e) => {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      currentSort.key = selectedOption.value;
+      currentSort.order = selectedOption.dataset.order;
+      applyFiltersAndSort();
+    });
+
+    function applyFiltersAndSort() {
+      let filteredData = papersData;
+      // Filter
+      if (currentFilters.size > 0) {
+        filteredData = papersData.filter(paper => currentFilters.has(paper.source_title));
+      }
+      // Sort
+      filteredData = [...filteredData].sort((a, b) => {
+        const key = currentSort.key;
+        const order = currentSort.order === 'asc' ? 1 : -1;
+        if (key === 'relevance') {
+          return 0; // default: as is
+        }
+        if (key === 'citation_count') {
+          return order * ((a.citation_count || 0) - (b.citation_count || 0));
+        }
+        if (key === 'year') {
+          return order * ((a.year || 0) - (b.year || 0));
+        }
+        return 0;
+      });
+      renderPapers(filteredData);
+    }
+
+    // Fetch from Semantic Scholar
+    async function fetchAcademicPapers(query) {
+      const apiUrl = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(query)}&limit=10&fields=title,authors,year,abstract,citationCount,venue,url`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error(`API returned status ${response.status}`);
+      const result = await response.json();
+      // Transform the API data into a format suitable for display
+      return (result.data || []).map((item) => ({
+        id: item.paperId,
+        title: item.title,
+        abstract: item.abstract || "No abstract available.",
+        authors: item.authors?.map(a => a.name).join(", ") || "N/A",
+        year: item.year || "N/A",
+        citation_count: item.citationCount || 0,
+        source_title: item.venue || "Unknown Source",
+        source_uri: item.url || "#",
+      }));
+    }
+
+    // Main interaction
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const query = queryInput.value.trim();
+      if (!query) return;
+      // Reset UI
+      initialMessage.classList.add('hidden');
+      errorMessage.classList.add('hidden');
+      noResultsMessage.classList.add('hidden');
+      buttonText.textContent = "Searching...";
+      loadingSpinner.classList.remove('hidden');
+      searchButton.disabled = true;
+      resultsDiv.innerHTML = '<div class="text-center p-8 text-gray-500">Retrieving papers...</div>';
+      papersData = [];
+      currentFilters.clear();
+
+      try {
+        papersData = await fetchAcademicPapers(query);
+        if (papersData.length === 0) {
+          noResultsMessage.classList.remove('hidden');
+          filterColumn.classList.add('hidden');
+        } else {
+          renderPapers(papersData);
+          populateFilters(papersData);
+        }
+      } catch (error) {
+        resultsDiv.innerHTML = '';
+        errorMessage.textContent = `Error: ${error.message}`;
+        errorMessage.classList.remove('hidden');
+        filterColumn.classList.add('hidden');
+      } finally {
+        buttonText.textContent = "Search Papers";
+        loadingSpinner.classList.add('hidden');
+        searchButton.disabled = false;
+      }
+    });
+
+    // On load, ensure sort select is set up
+    sortSelect.value = 'relevance';
+  </script>
 </body>
 </html>
