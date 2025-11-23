@@ -1,47 +1,45 @@
-<style>
-        /* --- Custom Styles --- */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
-        }
-        .container {
-            max-width: 1000px;
-        }
-        /* Card hover effect for better user experience */
-        .card {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-        }
-        .sort-icon {
-            cursor: pointer;
-            margin-left: 0.5rem;
-            opacity: 0.6;
-        }
-        /* Custom Scrollbar for Filter Column */
-        #source-filters::-webkit-scrollbar {
-            width: 6px;
-        }
-        #source-filters::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        #source-filters::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        #source-filters::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        /* Ensure the link text truncation works visually */
-        .card h2 a {
-            display: inline-block;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    </style>
+/* --- Custom Styles --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f7f9fb;
+}
+.container {
+    max-width: 1000px;
+}
+/* Card hover effect for better user experience */
+.card {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+.sort-icon {
+    cursor: pointer;
+    margin-left: 0.5rem;
+    opacity: 0.6;
+}
+/* Custom Scrollbar for Filter Column */
+#source-filters::-webkit-scrollbar {
+    width: 6px;
+}
+#source-filters::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+#source-filters::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+#source-filters::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+/* Ensure the link text truncation works visually */
+.card h2 a {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

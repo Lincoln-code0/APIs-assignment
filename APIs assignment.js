@@ -1,4 +1,4 @@
-// The application is purely client-side and does not require a database connection.
+\// The application is purely client-side and does not require a database connection.
 
 let papersData = []; // Store the full, original fetched data
 let currentFilters = new Set(); // Store active source filters
@@ -17,6 +17,7 @@ const loadingSpinner = document.getElementById('loading-spinner');
 const filterColumn = document.getElementById('filter-column');
 const sourceFiltersDiv = document.getElementById('source-filters');
 const sortSelect = document.getElementById('sort-select');
+
 
 // --- Utility Functions for Data Handling ---
 
@@ -115,10 +116,11 @@ function populateFilters(data) {
             const isChecked = currentFilters.has(source);
             const count = data.filter(p => p.source_title === source).length;
             
+            // Note: The onchange listener is updated to use the globally exposed function.
             const filterHtml = `
                 <label class="inline-flex items-center text-gray-700 cursor-pointer hover:bg-gray-100 p-1 rounded w-full">
                     <input type="checkbox" data-source="${source}" ${isChecked ? 'checked' : ''} 
-                           class="form-checkbox h-4 w-4 text-blue-600 rounded" onchange="filterResults(event.target.dataset.source, this.checked)">
+                           class="form-checkbox h-4 w-4 text-blue-600 rounded" onchange="window.filterResults(this.dataset.source, this.checked)">
                     <span class="ml-2 text-sm">${source} (${count})</span>
                 </label>
             `;
@@ -191,7 +193,7 @@ async function fetchAcademicPapers(query) {
     const systemPrompt = "You are an AI assistant designed to act as an Academic Paper Finder. Based on the user's query, find and synthesize the titles, authors, and a brief abstract for three highly relevant academic papers or research findings. Format your response as a single, readable string, clearly separating each entry with an empty line. Do not use Markdown formatting like lists or headers in the output text. Use mock values for citation counts and year if not found.";
     
     const userQuery = `Find academic papers, research articles, or recent scientific findings about: "${query}"`;
-    const apiKey = ""; 
+    const apiKey = ""; // INSERT YOUR GEMINI API KEY HERE
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
     const payload = {
